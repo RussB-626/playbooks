@@ -1,0 +1,44 @@
+---
+- hosts: all
+  gather_facts: yes
+  become: yes
+  become_user: root
+
+  tasks:
+    - name: Synch Game Server Backup Files
+      block:
+        # Discord Messages
+        - name: "Players Discord Message - Start"
+          community.general.discord:
+            webhook_id: "{{ item.id }}"
+            webhook_token: "{{ item.token }}"
+            content: "Synching ATM-9 Minecraft Server Backup Files."
+            username: "Ansible Alerts"
+          loop:
+            - { id: "{{ nft_discord_id }}", token: "{{ nft_discord_token }}" }
+
+        # Actual Task
+        - name: Synch ATM-9 Backup Files
+          ansible.builtin.command: "rsync -a --delete {{ atm9_rsyc_dir_from }} {{ atm9_rsyc_dir_to }}"
+
+        # Discord Messages
+        - name: "Players Discord Message - End"
+          community.general.discord:
+            webhook_id: "{{ item.id }}"
+            webhook_token: "{{ item.token }}"
+            content: "Finished Synching ATM-9 Minecraft Server Backup Files."
+            username: "Ansible Alerts"
+          loop:
+            - { id: "{{ nft_discord_id }}", token: "{{ nft_discord_token }}" }
+
+      # --------------- ERROR HANDLING --------------- #
+      rescue:
+        - name: "Discord Messages - Alert"
+          community.general.discord:
+            webhook_id: "{{ item.id }}"
+            webhook_token: "{{ item.token }}"
+            content: "An Error Has Been Encountered During The Process For Synching The ATM-9 Minecraft Server Backup Files."
+            username: "Ansible Alerts"
+          loop:
+            - { id: "{{ nft_discord_id }}", token: "{{ nft_discord_token }}" }
+            - { id: "{{ notif_discord_id }}", token: "{{ notif_discord_token }}" }

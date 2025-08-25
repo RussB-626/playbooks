@@ -1,0 +1,26 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+
+  tasks:
+    - name: Setup NFS Share Directory For Mounting
+      ansible.builtin.file:
+        path: "{{ local_nfs_dir }}"
+        state: directory
+        owner: root
+        group: root
+        mode: 0775
+        recurse: yes
+
+    - name: Mount NFS Volume
+      ansible.posix.mount:
+        src: "{{ nfs_ip }}:{{ nfs_dir }}"
+        path: "{{ local_nfs_dir }}"
+        state: mounted
+        fstype: nfs
+
+    - name: Ensure NFS Volume Mounting On Restart
+      ansible.builtin.lineinfile:
+        dest: /etc/fstab
+        line: "{{ nfs_ip }}:{{ nfs_dir }} {{ local_nfs_dir }} nfs defaults 0 0"

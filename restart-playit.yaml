@@ -1,0 +1,36 @@
+---
+- hosts: all
+  gather_facts: yes
+  become: yes
+  become_user: root
+
+  tasks:
+    - name: Restart Playit Services
+      block:
+        # Discord Messages
+        - name: "NFT Discord Message: Restart Playit Service"
+          community.general.discord:
+            webhook_id: "{{ item.id }}"
+            webhook_token: "{{ item.token }}"
+            content: "Restarting Playit Service."
+            username: "Ansible Alerts"
+          loop:
+            - { id: "{{ nft_discord_id }}", token: "{{ nft_discord_token }}" }
+
+        # Restart Playit Service
+        - name: Restart Playit.gg Service
+          ansible.builtin.service:
+            name: playit
+            state: restarted
+
+      # --------------- ERROR HANDLING --------------- #
+      rescue:
+        - name: "Discord Messages: Error"
+          community.general.discord:
+            webhook_id: "{{ item.id }}"
+            webhook_token: "{{ item.token }}"
+            content: "A process has failed restarting the Playit service"
+            username: "Ansible Alerts"
+          loop:
+            - { id: "{{ nft_discord_id }}", token: "{{ nft_discord_token }}" }
+            - { id: "{{ notif_discord_id }}", token: "{{ notif_discord_token }}" }
