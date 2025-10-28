@@ -1,0 +1,10 @@
+---
+- name: Perform AMP Instance Manager Upgrade
+  hosts: all
+  gather_fact: false
+  become: true
+  become_user: amp
+  
+  tasks:
+    - name: Execute ampinstmgr upgradeall without cache
+      ansible.builtin.command: ampinstmgr --nocache upgradeall
