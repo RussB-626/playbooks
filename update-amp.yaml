@@ -1,7 +1,7 @@
 ---
 - name: Perform AMP Instance Manager Upgrade
   hosts: all
-  gather_fact: false
+  gather_facts: false
   become: true
   become_user: amp
   
