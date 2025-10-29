@@ -19,12 +19,6 @@
       become_user: amp # This applies only to the tasks within this block
 
     # --- ROOT User Tasks ---
-    - name: Check if a reboot is required
-      ansible.builtin.stat:
-        path: /var/run/reboot-required
-        get_checksum: no
-      register: reboot_required_file
-
     - name: Reboot the Servers
       ansible.builtin.reboot:
       
