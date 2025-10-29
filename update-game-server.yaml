@@ -2,20 +2,23 @@
 - name: Perform Game Server Updates And AMP Instance Manager Upgrade
   hosts: all
   become: true
-  become_user: root  
+  become_user: root # Default for the play
+
   tasks:
+    # --- ROOT User Tasks ---
     - name: Perform a dist-upgrade
       ansible.builtin.apt:
         upgrade: full
         update_cache: yes
+    
+    # --- AMP User Tasks (Grouped in a Block) ---
+    - name: AMP Instance Manager Upgrade Tasks
+      block:
+        - name: Execute ampinstmgr upgradeall without cache
+          ansible.builtin.command: ampinstmgr --nocache upgradeall
+      become_user: amp # This applies only to the tasks within this block
 
-  become_user: amp  
-  tasks:
-    - name: Execute ampinstmgr upgradeall without cache
-      ansible.builtin.command: ampinstmgr --nocache upgradeall
-
-  become_user: root
-  tasks:
+    # --- ROOT User Tasks ---
     - name: Check if a reboot is required
       ansible.builtin.stat:
         path: /var/run/reboot-required
@@ -25,7 +28,10 @@
     - name: Reboot the Servers (if required)
       ansible.builtin.reboot:
       when: reboot_required_file.stat.exists == true
-    
+      # Adding a delay and wait_for to ensure the system comes back cleanly (optional but good practice)
+      # delay: 5
+      # post_reboot_delay: 60
+      
     - name: Remove dependencies that are no longer required
       ansible.builtin.apt:
         autoremove: yes
