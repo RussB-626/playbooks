@@ -1,0 +1,31 @@
+---
+- name: Perform Game Server Updates And AMP Instance Manager Upgrade
+  hosts: all
+  become: true
+  become_user: root  
+  tasks:
+    - name: Perform a dist-upgrade
+      ansible.builtin.apt:
+        upgrade: full
+        update_cache: yes
+
+  become_user: amp  
+  tasks:
+    - name: Execute ampinstmgr upgradeall without cache
+      ansible.builtin.command: ampinstmgr --nocache upgradeall
+
+  become_user: root
+  tasks:
+    - name: Check if a reboot is required
+      ansible.builtin.stat:
+        path: /var/run/reboot-required
+        get_checksum: no
+      register: reboot_required_file
+
+    - name: Reboot the Servers (if required)
+      ansible.builtin.reboot:
+      when: reboot_required_file.stat.exists == true
+    
+    - name: Remove dependencies that are no longer required
+      ansible.builtin.apt:
+        autoremove: yes
