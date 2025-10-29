@@ -25,12 +25,8 @@
         get_checksum: no
       register: reboot_required_file
 
-    - name: Reboot the Servers (if required)
+    - name: Reboot the Servers
       ansible.builtin.reboot:
-      when: reboot_required_file.stat.exists == true
-      # Adding a delay and wait_for to ensure the system comes back cleanly (optional but good practice)
-      # delay: 5
-      # post_reboot_delay: 60
       
     - name: Remove dependencies that are no longer required
       ansible.builtin.apt:
