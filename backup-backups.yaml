@@ -15,7 +15,7 @@
             content: "Backing Up The Backups To The Backup Server."
             username: "Ansible Alerts"
           loop:
-            - { id: "{{ nft_server_alerts_id }}", token: "{{ nft_server_alerts_id }}" }
+            - { id: "{{ nft_server_alerts_id }}", token: "{{ nft_server_alerts_token }}" }
 
         # Actual Task
         - name: Synch Backups Files To Backup Server
@@ -31,7 +31,7 @@
             content: "Finshed Backing Up The Backups To The Backup Server"
             username: "Ansible Alerts"
           loop:
-            - { id: "{{ nft_server_alerts_id }}", token: "{{ nft_server_alerts_id }}" }
+            - { id: "{{ nft_server_alerts_id }}", token: "{{ nft_server_alerts_token }}" }
 
       # --------------- ERROR HANDLING --------------- #
       rescue:
@@ -42,5 +42,5 @@
             content: "An Error Has Been Encountered During The Backup Process."
             username: "Ansible Alerts"
           loop:
-            - { id: "{{ nft_server_alerts_id }}", token: "{{ nft_server_alerts_id }}" }
-            - { id: "{{ homelab_notif_id }}", token: "{{ homelab_notif_id }}" }
+            - { id: "{{ nft_server_alerts_id }}", token: "{{ nft_server_alerts_token }}" }
+            - { id: "{{ homelab_amp_notif_id }}", token: "{{ homelab_amp_notif_token }}" }
