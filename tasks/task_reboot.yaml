@@ -5,5 +5,27 @@
   become_user: root
   
   tasks:
-    - name: Reboot Server
-      ansible.builtin.reboot:
+    - block:
+        # Discord Messages
+        - name: "Send Message To Homelab Discord"
+          community.general.discord:
+            webhook_id: "{{ item.id }}"
+            webhook_token: "{{ item.token }}"
+            content: "Rebooting Host Machine: {{ inventory_hostname }}"
+            username: "Ansible Alerts"
+          loop:
+            - { id: "{{ hl_homelab_server_alerts_id }}", token: "{{ hl_homelab_server_alerts_token }}" }
+
+        - name: Reboot Server
+          ansible.builtin.reboot:
+
+      # --------------- ERROR HANDLING --------------- #
+      rescue:
+        - name: "Discord Messages - Alert"
+          community.general.discord:
+            webhook_id: "{{ item.id }}"
+            webhook_token: "{{ item.token }}"
+            content: "An Error Has Been Encountered Rebooting: {{ inventory_hostname }}."
+            username: "Ansible Alerts"
+          loop:
+            - { id: "{{ hl_homelab_server_alerts_id }}", token: "{{ hl_homelab_server_alerts_token }}" }

@@ -6,21 +6,43 @@
   become_user: root
   
   tasks:
-    - name: Perform a dist-upgrade
-      ansible.builtin.apt:
-        upgrade: full
-        update_cache: yes
-    
-    - name: Check if a reboot is required
-      ansible.builtin.stat:
-        path: /var/run/reboot-required
-        get_checksum: no
-      register: reboot_required_file
+    - block:
+        # Discord Messages
+        - name: "Send Message To Homelab Discord"
+          community.general.discord:
+            webhook_id: "{{ item.id }}"
+            webhook_token: "{{ item.token }}"
+            content: "Upgrading Host Machine: {{ inventory_hostname }}"
+            username: "Ansible Alerts"
+          loop:
+            - { id: "{{ hl_homelab_server_alerts_id }}", token: "{{ hl_homelab_server_alerts_token }}" }
 
-    - name: Reboot the Servers (if required)
-      ansible.builtin.reboot:
-      when: reboot_required_file.stat.exists == true
-    
-    - name: Remove dependencies that are no longer required
-      ansible.builtin.apt:
-        autoremove: yes
+        - name: Perform a dist-upgrade
+          ansible.builtin.apt:
+            upgrade: full
+            update_cache: yes
+        
+        - name: Check if a reboot is required
+          ansible.builtin.stat:
+            path: /var/run/reboot-required
+            get_checksum: no
+          register: reboot_required_file
+
+        - name: Reboot the Servers (if required)
+          ansible.builtin.reboot:
+          when: reboot_required_file.stat.exists == true
+        
+        - name: Remove dependencies that are no longer required
+          ansible.builtin.apt:
+            autoremove: yes
+
+      # --------------- ERROR HANDLING --------------- #
+      rescue:
+        - name: "Discord Messages - Alert"
+          community.general.discord:
+            webhook_id: "{{ item.id }}"
+            webhook_token: "{{ item.token }}"
+            content: "An Error Has Been Encountered Rebooting: {{ inventory_hostname }}."
+            username: "Ansible Alerts"
+          loop:
+            - { id: "{{ hl_homelab_server_alerts_id }}", token: "{{ hl_homelab_server_alerts_token }}" }
