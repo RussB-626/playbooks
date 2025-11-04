@@ -57,7 +57,7 @@
           community.general.discord:
             webhook_id: "{{ item.id }}"
             webhook_token: "{{ item.token }}"
-            content: "The AMP Server Upgrade Has Finished."
+            content: "The AMP Server Upgrade Has Finished. The Game Instances Will Restart Shortly."
             username: "Ansible Alerts"
           loop:
             - { id: "{{ nft_server_alerts_id }}", token: "{{ nft_server_alerts_token }}" }
