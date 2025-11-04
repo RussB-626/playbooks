@@ -43,4 +43,4 @@
             username: "Ansible Alerts"
           loop:
             - { id: "{{ nft_server_alerts_id }}", token: "{{ nft_server_alerts_token }}" }
-            - { id: "{{ homelab_amp_notif_id }}", token: "{{ homelab_amp_notif_token }}" }
+            - { id: "{{ hl_amp_server_alerts_id }}", token: "{{ hl_amp_server_alerts_token }}" }
