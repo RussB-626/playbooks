@@ -21,6 +21,16 @@
           ansible.builtin.pause:
             minutes: 5
 
+        # --- Discord Message ---
+        - name: "Discord Messages - Server Upgrade Alert"
+          community.general.discord:
+            webhook_id: "{{ item.id }}"
+            webhook_token: "{{ item.token }}"
+            content: "AMP Server Upgrades Are Now In Process."
+            username: "Ansible Alerts"
+          loop:
+            - { id: "{{ nft_server_alerts_id }}", token: "{{ nft_server_alerts_token }}" }
+
         # --- ROOT User Tasks ---
         - name: Perform a dist-upgrade
           ansible.builtin.apt:
