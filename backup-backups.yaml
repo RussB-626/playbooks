@@ -12,24 +12,26 @@
           community.general.discord:
             webhook_id: "{{ item.id }}"
             webhook_token: "{{ item.token }}"
-            content: "Synching ATM-9 Minecraft Server Backup Files."
+            content: "Backing Up The Backups To The Backup Server."
             username: "Ansible Alerts"
           loop:
-            - { id: "{{ nft_discord_id }}", token: "{{ nft_discord_token }}" }
+            - { id: "{{ nft_server_alerts_id }}", token: "{{ nft_server_alerts_id }}" }
 
         # Actual Task
-        - name: Synch ATM-9 Backup Files
-          ansible.builtin.command: "rsync -a --delete {{ atm9_rsyc_dir_from }} {{ atm9_rsyc_dir_to }}"
+        - name: Synch Backups Files To Backup Server
+          ansible.builtin.command: "rsync -a --delete {{ item.from }} {{ item.to }}"
+          loop:
+            - { from: "{{ atm9_rsyc_dir_from }}", to: "{{ atm9_rsyc_dir_to }}" }
 
         # Discord Messages
         - name: "Players Discord Message - End"
           community.general.discord:
             webhook_id: "{{ item.id }}"
             webhook_token: "{{ item.token }}"
-            content: "Finished Synching ATM-9 Minecraft Server Backup Files."
+            content: "Finshed Backing Up The Backups To The Backup Server"
             username: "Ansible Alerts"
           loop:
-            - { id: "{{ nft_discord_id }}", token: "{{ nft_discord_token }}" }
+            - { id: "{{ nft_server_alerts_id }}", token: "{{ nft_server_alerts_id }}" }
 
       # --------------- ERROR HANDLING --------------- #
       rescue:
@@ -37,8 +39,8 @@
           community.general.discord:
             webhook_id: "{{ item.id }}"
             webhook_token: "{{ item.token }}"
-            content: "An Error Has Been Encountered During The Process For Synching The ATM-9 Minecraft Server Backup Files."
+            content: "An Error Has Been Encountered During The Backup Process."
             username: "Ansible Alerts"
           loop:
-            - { id: "{{ nft_discord_id }}", token: "{{ nft_discord_token }}" }
-            - { id: "{{ notif_discord_id }}", token: "{{ notif_discord_token }}" }
+            - { id: "{{ nft_server_alerts_id }}", token: "{{ nft_server_alerts_id }}" }
+            - { id: "{{ homelab_notif_id }}", token: "{{ homelab_notif_id }}" }
