@@ -6,8 +6,8 @@
   
   tasks:
     - block:
-        # Discord Messages
-        - name: "Send Message To Homelab Discord"
+        # --- Discord Messages ---
+        - name: "Discord Message - Rebooting"
           community.general.discord:
             webhook_id: "{{ item.id }}"
             webhook_token: "{{ item.token }}"
@@ -18,6 +18,16 @@
 
         - name: Reboot Server
           ansible.builtin.reboot:
+
+        # --- Discord Messages ---
+        - name: "Discord Message - Online"
+          community.general.discord:
+            webhook_id: "{{ item.id }}"
+            webhook_token: "{{ item.token }}"
+            content: "Host Machine Online: {{ inventory_hostname }}"
+            username: "Ansible Alerts"
+          loop:
+            - { id: "{{ hl_homelab_server_alerts_id }}", token: "{{ hl_homelab_server_alerts_token }}" }
 
       # --------------- ERROR HANDLING --------------- #
       rescue:

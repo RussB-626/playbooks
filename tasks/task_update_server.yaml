@@ -7,8 +7,8 @@
   
   tasks:
     - block:
-        # Discord Messages
-        - name: "Send Message To Homelab Discord"
+        # --- Discord Messages ---
+        - name: "Discord Message - Upgrade In Process"
           community.general.discord:
             webhook_id: "{{ item.id }}"
             webhook_token: "{{ item.token }}"
@@ -35,6 +35,16 @@
         - name: Remove dependencies that are no longer required
           ansible.builtin.apt:
             autoremove: yes
+
+        # --- Discord Messages ---
+        - name: "Discord Message - Upgrade Finished"
+          community.general.discord:
+            webhook_id: "{{ item.id }}"
+            webhook_token: "{{ item.token }}"
+            content: "Host Machine Upgrade Finished: {{ inventory_hostname }}"
+            username: "Ansible Alerts"
+          loop:
+            - { id: "{{ hl_homelab_server_alerts_id }}", token: "{{ hl_homelab_server_alerts_token }}" }
 
       # --------------- ERROR HANDLING --------------- #
       rescue:
