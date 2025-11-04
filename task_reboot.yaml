@@ -1,0 +1,8 @@
+---
+- name: "Task: Reboot Servers"
+  hosts: all
+  become: yes
+  become_user: root
+  
+  tasks:
+    ansible.builtin.reboot:

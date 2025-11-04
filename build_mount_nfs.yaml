@@ -1,5 +1,6 @@
 ---
-- hosts: all
+- name: "Build: Setup And Mount NFS Directories"
+  hosts: all
   become: yes
   become_user: root
 

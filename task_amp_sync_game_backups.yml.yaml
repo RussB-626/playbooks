@@ -1,0 +1,46 @@
+---
+- name: "Task: Synch Game Server Backup Files"
+  hosts: all
+  gather_facts: yes
+  become: yes
+  become_user: root
+
+  tasks:
+    block:
+      # Discord Messages
+      - name: "Players Discord Message - Start"
+        community.general.discord:
+          webhook_id: "{{ item.id }}"
+          webhook_token: "{{ item.token }}"
+          content: "Backing Up The Backups To The Backup Server."
+          username: "Ansible Alerts"
+        loop:
+          - { id: "{{ nft_server_alerts_id }}", token: "{{ nft_server_alerts_token }}" }
+
+      # Actual Task
+      - name: Synch Backups Files To Backup Server
+        ansible.builtin.command: "rsync -a --delete {{ item.from }} {{ item.to }}"
+        loop:
+          - { from: "{{ atm9_rsyc_dir_from }}", to: "{{ atm9_rsyc_dir_to }}" }
+
+      # Discord Messages
+      - name: "Players Discord Message - End"
+        community.general.discord:
+          webhook_id: "{{ item.id }}"
+          webhook_token: "{{ item.token }}"
+          content: "Finshed Backing Up The Backups To The Backup Server."
+          username: "Ansible Alerts"
+        loop:
+          - { id: "{{ nft_server_alerts_id }}", token: "{{ nft_server_alerts_token }}" }
+
+    # --------------- ERROR HANDLING --------------- #
+    rescue:
+      - name: "Discord Messages - Alert"
+        community.general.discord:
+          webhook_id: "{{ item.id }}"
+          webhook_token: "{{ item.token }}"
+          content: "An Error Has Been Encountered During The Backup Process."
+          username: "Ansible Alerts"
+        loop:
+          - { id: "{{ nft_server_alerts_id }}", token: "{{ nft_server_alerts_token }}" }
+          - { id: "{{ homelab_amp_notif_id }}", token: "{{ homelab_amp_notif_token }}" }

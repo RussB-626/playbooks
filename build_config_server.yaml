@@ -1,5 +1,6 @@
 ---
-- hosts: all
+- name: "Build: Configure Server"
+  hosts: all
   become: yes
   become_user: root
   vars:

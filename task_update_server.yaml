@@ -1,5 +1,6 @@
 ---
-- hosts: all
+- name: "Task: Upgrade/Update Server(s)"
+  hosts: all
   gather_facts: yes
   become: yes
   become_user: root
