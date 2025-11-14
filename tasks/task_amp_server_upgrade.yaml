@@ -11,7 +11,7 @@
           community.general.discord:
             webhook_id: "{{ item.id }}"
             webhook_token: "{{ item.token }}"
-            content: "In 5 Minutes All Servers Will Be Taken Offline For Upgrades"
+            content: "In 5 Minutes All Game Instances And The AMP Server Will Be Taken Offline For Upgrades"
             username: "Ansible Alerts"
           loop:
             - { id: "{{ nft_server_alerts_id }}", token: "{{ nft_server_alerts_token }}" }
@@ -20,6 +20,16 @@
         - name: Pause for 5 minutes
           ansible.builtin.pause:
             minutes: 5
+
+        # --- Discord Message ---
+        - name: "Discord Messages - Server Upgrade Alert"
+          community.general.discord:
+            webhook_id: "{{ item.id }}"
+            webhook_token: "{{ item.token }}"
+            content: "AMP Server Upgrades Are Now In Process."
+            username: "Ansible Alerts"
+          loop:
+            - { id: "{{ nft_server_alerts_id }}", token: "{{ nft_server_alerts_token }}" }
 
         # --- ROOT User Tasks ---
         - name: Perform a dist-upgrade
@@ -47,7 +57,7 @@
           community.general.discord:
             webhook_id: "{{ item.id }}"
             webhook_token: "{{ item.token }}"
-            content: "The Server Upgrade Has Finished."
+            content: "The AMP Server Upgrade Has Finished. The Game Instances Will Restart Shortly."
             username: "Ansible Alerts"
           loop:
             - { id: "{{ nft_server_alerts_id }}", token: "{{ nft_server_alerts_token }}" }
@@ -62,4 +72,4 @@
             username: "Ansible Alerts"
           loop:
             - { id: "{{ nft_server_alerts_id }}", token: "{{ nft_server_alerts_token }}" }
-            - { id: "{{ homelab_amp_notif_id }}", token: "{{ homelab_amp_notif_token }}" }
+            - { id: "{{ hl_amp_server_alerts_id }}", token: "{{ hl_amp_server_alerts_token }}" }
