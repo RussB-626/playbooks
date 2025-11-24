@@ -21,7 +21,6 @@
         - name: Synch Backups Files To Backup Server
           ansible.builtin.command: "rsync -a --delete {{ item.from }} {{ item.to }}"
           loop:
-            - { from: "{{ atm9_rsyc_dir_from }}", to: "{{ atm9_rsyc_dir_to }}" }
             - { from: "{{ atm10_skyblock_rsyc_dir_from }}", to: "{{ atm10_skyblock_rsyc_dir_to }}" }
 
         # Discord Messages
