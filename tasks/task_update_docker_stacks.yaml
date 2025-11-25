@@ -42,7 +42,7 @@
           ansible.builtin.shell:
             cmd: docker image prune -af
       
-      # The 'loop' and 'when' are now correctly indented to apply to the 'ansible.builtin.block' task.
+      # FIX: The 'loop' and 'when' are now at the same indentation level as 'ansible.builtin.block'
       loop: "{{ current_client_config.directories }}"
       
       # The entire block only runs if a config was found for the host
