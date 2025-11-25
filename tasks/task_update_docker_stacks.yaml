@@ -42,8 +42,8 @@
           ansible.builtin.shell:
             cmd: docker image prune -af
       
-  # The loop iterates over the list of directories found for the current client IP
-  loop: "{{ current_client_config.directories }}"
-  
-  # The entire block only runs if a config was found for the host
-  when: current_client_config is defined and current_client_config != {}
+      # The 'loop' and 'when' are now correctly indented to apply to the 'ansible.builtin.block' task.
+      loop: "{{ current_client_config.directories }}"
+      
+      # The entire block only runs if a config was found for the host
+      when: current_client_config is defined and current_client_config != {}
