@@ -4,7 +4,7 @@
   gather_facts: true
 
   vars:
-    # ⚠️ IMPORTANT: Define your list of specific client IPs and their directories
+    # IMPORTANT: Define your list of specific client IPs and their directories
     client_configs:
       - ip: "172.16.10.6"
         directories:
@@ -13,32 +13,32 @@
       # Add more client IP addresses and their corresponding directories lists.
 
   tasks:
-    - name: 🔍 Find the configuration for the current host's IP
+    - name: Find the configuration for the current host's IP
       # Select the entry where the 'ip' matches the host's primary IP
       set_fact:
         current_client_config: "{{ client_configs | selectattr('ip', 'equalto', ansible_default_ipv4.address) | list | first | default({}) }}"
 
-    - name: 🛑 Skip execution if the current host is not in the specified list
+    - name: Skip execution if the current host is not in the specified list
       debug:
         msg: "Skipping tasks. Host {{ ansible_default_ipv4.address }} is not in the defined client list."
       when: current_client_config is not defined or current_client_config == {}
 
     # --- Start Looping Through Directories ---
-    - name: 🔄 Iterate through all defined directories for this host
+    - name: Iterate through all defined directories for this host
       # The block groups the three commands (pull, up, prune) so they run for one directory before moving to the next.
       ansible.builtin.block:
-        - name: 📂 Go to the directory and pull the latest images
+        - name: Go to the directory and pull the latest images
           community.docker.docker_compose:
             project_src: "{{ item }}"
             pull: true
             state: present
 
-        - name: 🚀 Start the Docker containers (docker compose up -d)
+        - name: Start the Docker containers (docker compose up -d)
           community.docker.docker_compose:
             project_src: "{{ item }}"
             state: started
 
-        - name: 🧹 Prune unused Docker images (docker image prune -af)
+        - name: Prune unused Docker images (docker image prune -af)
           ansible.builtin.shell:
             cmd: docker image prune -af
       
