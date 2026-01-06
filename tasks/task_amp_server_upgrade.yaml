@@ -6,27 +6,29 @@
 
   tasks:
     - block:
-        # --- Discord Message ---
-        - name: "Discord Messages - Server Upgrade Alert"
+        # --- Discord Messages --- 
+        - name: "Players Discord Message - Start"
           community.general.discord:
             webhook_id: "{{ item.id }}"
             webhook_token: "{{ item.token }}"
-            content: "In 5 Minutes All Game Instances And The AMP Server Will Be Taken Offline For Upgrades"
+            content: "Backing Up The Backups To The Backup Server."
             username: "Ansible Alerts"
           loop:
             - { id: "{{ nft_server_alerts_id }}", token: "{{ nft_server_alerts_token }}" }
 
-        # --- Pause System For 5 Minutes ---
-        - name: Pause for 5 minutes
-          ansible.builtin.pause:
-            minutes: 5
+        # --- Do Synch Task --- 
+        - name: Synch Backups Files To Backup Server
+          ansible.builtin.command: "rsync -a --delete {{ item.from }} {{ item.to }}"
+          loop:
+            - { from: "{{ atm10_rsyc_dir_from }}", to: "{{ atm10_rsyc_dir_to }}" }
+            - { from: "{{ atm10_skyblock_rsyc_dir_from }}", to: "{{ atm10_skyblock_rsyc_dir_to }}" }
 
         # --- Discord Message ---
         - name: "Discord Messages - Server Upgrade Alert"
           community.general.discord:
             webhook_id: "{{ item.id }}"
             webhook_token: "{{ item.token }}"
-            content: "AMP Server Upgrades Are Now In Process."
+            content: "Finshed Backing Up The Backups To The Backup Server. AMP Server Upgrades Are Now In Process."
             username: "Ansible Alerts"
           loop:
             - { id: "{{ nft_server_alerts_id }}", token: "{{ nft_server_alerts_token }}" }
