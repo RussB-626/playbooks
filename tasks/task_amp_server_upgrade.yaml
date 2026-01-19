@@ -21,7 +21,7 @@
           ansible.builtin.command: "rsync -a --delete {{ item.from }} {{ item.to }}"
           loop:
             - { from: "{{ atm10_rsyc_dir_from }}", to: "{{ atm10_rsyc_dir_to }}" }
-            - { from: "{{ atm10_skyblock_rsyc_dir_from }}", to: "{{ atm10_skyblock_rsyc_dir_to }}" }
+            - { from: "{{ hytale_rsyc_dir_from }}", to: "{{ hytale_rsyc_dir_to }}" }
 
         # --- Discord Message ---
         - name: "Discord Messages - Server Upgrade Alert"
